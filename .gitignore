@@ -1,0 +1,11 @@
+.env
+.env.op
+.env.hokum
+.env.sepolia
+node_modules
+dist
+history
+spair
+database
+```
+```
