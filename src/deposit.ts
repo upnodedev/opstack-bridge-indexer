@@ -24,7 +24,7 @@ const fetchPastEvents = async (
     contract.queryFilter('TransactionDeposited', fromBlock, toBlock)
   );
   console.log(
-    `Fetching events from block ${fromBlock} to ${toBlock} for a total of ${
+    `Fetching TransactionDeposited from block ${fromBlock} to ${toBlock} for a total of ${
       logs.length
     } events. ${i + 1}/${times}`
   );
