@@ -72,6 +72,16 @@ To start the server for frontend using, run
 npx pm2 start npm --name "opstack-bridge-server" -- run server
 ```
 
+### Step 8: Checking
+``` bash
+# opstack-bridge-indexer
+npx pm2 logs opstack-bridge-indexer
+``` 
+``` bash
+# opstack-bridge-server
+npx pm2 logs opstack-bridge-server
+```
+
 ### Usage
 The server exposes endpoints to interact with the stored events. You can use these endpoints in your frontend application to fetch and display the events as needed.
 
