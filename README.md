@@ -19,7 +19,7 @@ cd opstack-bridge-indexer
 ### Step 2: Install Packages
 Install the necessary packages by running
 ```bash
-yarn --ignore-engines
+npm install --ignore-engines
 ```
 
 ### Step 3: Configure Environment Variables
@@ -51,19 +51,25 @@ PORT = 3000
 ### Step 4: Build the Project
 Build the project by running
 ``` bash
-yarn build
+npm run build
 ```
 
-### Step 5: Store and Receive Events
+### Step 5: Create local Database
+Create local SQLite via run :
+``` bash
+npm run db
+```
+
+### Step 6: Store and Receive Events
 To start the process of storing and receiving events, run
 ``` bash
-yarn start || npx pm2 start npm --name "opstack-bridge-server" -- run start
+npx pm2 start npm --name "opstack-bridge-server" -- run start
 ```
 
-### Step 6: Start the Server
+### Step 7: Start the Server
 To start the server for frontend using, run
 ``` bash
-yarn server || npx pm2 start npm --name "opstack-bridge-server" -- run server
+npx pm2 start npm --name "opstack-bridge-server" -- run server
 ```
 
 ### Usage
