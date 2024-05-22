@@ -63,7 +63,7 @@ npm run db
 ### Step 6: Store and Receive Events
 To start the process of storing and receiving events, run
 ``` bash
-npx pm2 start npm --name "opstack-bridge-server" -- run start
+npx pm2 start npm --name "opstack-bridge-indexer" -- run start
 ```
 
 ### Step 7: Start the Server
