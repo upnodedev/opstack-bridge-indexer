@@ -57,13 +57,13 @@ yarn build
 ### Step 5: Store and Receive Events
 To start the process of storing and receiving events, run
 ``` bash
-yarn start
+yarn start || npx pm2 start npm --name "opstack-bridge-server" -- run start
 ```
 
 ### Step 6: Start the Server
 To start the server for frontend using, run
 ``` bash
-yarn server
+yarn server || npx pm2 start npm --name "opstack-bridge-server" -- run server
 ```
 
 ### Usage
