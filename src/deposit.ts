@@ -56,22 +56,25 @@ const fetchPastEvents = async (
   );
 };
 
-const main = async () => {
-  console.time('fetchPastEvents');
+const main = async (
+  db: any,
+  currentBlock: number
+) => {
+  console.time('depositFetch');
   // Connect to the database and initialize it
-  const db = await connectDb().catch((err) => {
-    console.error('Failed to connect to the database:', err);
-    process.exit(1);
-  });
-  const currentBlock = await attemptOperationInfinitely(async () => {
-    return selectWorkingProviderL1().then((provider) =>
-      provider.getBlockNumber()
-    );
-  });
+  // const db = await connectDb().catch((err) => {
+  //   console.error('Failed to connect to the database:', err);
+  //   process.exit(1);
+  // });
+  // const currentBlock = await attemptOperationInfinitely(async () => {
+  //   return selectWorkingProviderL1().then((provider) =>
+  //     provider.getBlockNumber()
+  //   );
+  // });
 
-  const currentBlockPass = currentBlock - 1;
+  const currentBlockPass = currentBlock;
   const diff = currentBlockPass - ENV.L1_PORTAL_BLOCK_CREATED;
-  console.log({ currentBlock, currentBlockPass, diff });
+  // console.log({ currentBlock, currentBlockPass, diff });
 
   if (diff < 0) {
     console.log('portal contract has not been deployed yet');
@@ -89,7 +92,8 @@ const main = async () => {
     await sleep(100);
   }
 
-  console.timeEnd('fetchPastEvents');
+  console.timeEnd('depositFetch');
 };
 
-main();
+// main();
+export { main as depositFetch };

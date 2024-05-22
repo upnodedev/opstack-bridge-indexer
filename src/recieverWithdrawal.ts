@@ -5,19 +5,19 @@ import { publicClientL2 } from './utils/chain';
 
 console.log('Listening for withdrawal events...');
 
-const main = async () => {
-  const db = await connectDb()
-    .catch((error) => {
-      console.error('Error connecting to database:', error);
-      process.exit(1);
-    })
-    .then((value) => {
-      console.log('Connected to database');
-      return value;
-    });
+const main = async (db: any, currentBlock: any) => {
+  // const db = await connectDb()
+  //   .catch((error) => {
+  //     console.error('Error connecting to database:', error);
+  //     process.exit(1);
+  //   })
+  //   .then((value) => {
+  //     console.log('Connected to database');
+  //     return value;
+  //   });
   try {
-    const currentBlock = (await publicClientL2.getBlockNumber());
-    console.log(`Starting from block number: ${currentBlock}`);
+    // const currentBlock = (await publicClientL2.getBlockNumber());
+    console.log(`Reciever withdrawal from block : ${currentBlock}`);
 
     publicClientL2.watchContractEvent({
       address: ENV.L2_STANDARD_BRIDGE_ADDRESS,
@@ -62,6 +62,8 @@ const main = async () => {
   }
 };
 
-main().catch((error) => {
-  console.error('Unhandled error:', error);
-});
+// main().catch((error) => {
+//   console.error('Unhandled error:', error);
+// });
+
+export { main as recieverWithdrawal };

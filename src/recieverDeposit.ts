@@ -5,19 +5,19 @@ import { publicClientL1 } from './utils/chain';
 
 console.log('Listening for deposit events...');
 
-const main = async () => {
-  const db = await connectDb()
-    .catch((error) => {
-      console.error('Error connecting to database:', error);
-      process.exit(1);
-    })
-    .then((value) => {
-      console.log('Connected to database');
-      return value;
-    });
+const main = async (db: any, currentBlock: any) => {
+  // const db = await connectDb()
+  //   .catch((error) => {
+  //     console.error('Error connecting to database:', error);
+  //     process.exit(1);
+  //   })
+  //   .then((value) => {
+  //     console.log('Connected to database');
+  //     return value;
+  //   });
   try {
-    const currentBlock = await publicClientL1.getBlockNumber();
-    console.log(`Starting from block number: ${currentBlock}`);
+    // const currentBlock = await publicClientL1.getBlockNumber();
+    console.log(`Reciever deposit from block : ${currentBlock}`);
 
     publicClientL1.watchContractEvent({
       address: ENV.L1_PORTAL_ADDRESS,
@@ -61,6 +61,8 @@ const main = async () => {
   }
 };
 
-main().catch((error) => {
-  console.error('Unhandled error:', error);
-});
+// main().catch((error) => {
+//   console.error('Unhandled error:', error);
+// });
+
+export { main as recieverDeposit };
