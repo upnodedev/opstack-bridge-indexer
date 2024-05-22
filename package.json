@@ -1,11 +1,11 @@
 {
-  "name": "owning",
+  "name": "opstack-bridge-indexer",
   "version": "1.0.0",
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "in": "yarn --ignore-engines",
+    "install": "yarn --ignore-engines",
     "db": "node dist/init.js",
     "build": "rimraf dist && tsc",
     "deposit": "node dist/deposit.js",

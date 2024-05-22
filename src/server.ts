@@ -3,10 +3,11 @@
 import express, { Request, Response } from 'express';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import { ENV } from './utils/ENV';
 
 // Create express app
 const app = express();
-const PORT = 3000;
+const PORT = 3000 || ENV.PORT;
 
 // Open database
 async function openDb() {

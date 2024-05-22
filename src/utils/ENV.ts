@@ -19,5 +19,5 @@ export const ENV = {
   L2_STANDARD_BRIDGE_BLOCK_CREATED:
     +process.env.L2_STANDARD_BRIDGE_BLOCK_CREATED,
 
-  L1_WSS: process.env.L1_WSS_URL_1,
+  PORT: +process.env.PORT || 3000,
 };
