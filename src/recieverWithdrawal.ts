@@ -27,7 +27,6 @@ const main = async (db: any, currentBlock: any) => {
       onLogs: async (logs) => {
         console.log(`Received ${logs.length} logs`);
         for (const log of logs) {
-          console.log('Processing log:', log);
           const { l1Token, l2Token, from, to, amount, extraData } = log.args;
           const { transactionHash, address, blockNumber } = log;
           const event = {
@@ -38,13 +37,13 @@ const main = async (db: any, currentBlock: any) => {
             amount: amount.toString(),
             extraData,
             transactionHash,
-            blockNumber,
+            blockNumber: +blockNumber.toString(),
             address,
           };
 
           try {
             await insertEventWithdraw(db, event);
-            console.log('Event inserted successfully:', event);
+            console.log('Event inserted successfully:', event.transactionHash);
           } catch (err) {
             console.error('Error inserting event deposit:', err);
           }

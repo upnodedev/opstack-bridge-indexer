@@ -38,7 +38,7 @@ const fetchPastEvents = async (
       opaqueData,
       transactionHash,
       address,
-      blockNumber,
+      blockNumber: +blockNumber.toString(),
     };
 
     try {

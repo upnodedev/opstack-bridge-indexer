@@ -36,7 +36,7 @@ const main = async (db: any, currentBlock: any) => {
             opaqueData,
             transactionHash,
             address,
-            blockNumber,
+            blockNumber: +blockNumber.toString(),
           };
 
           try {

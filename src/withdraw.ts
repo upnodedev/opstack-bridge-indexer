@@ -1,10 +1,18 @@
 import 'dotenv/config';
 import { ENV } from './utils/ENV';
-import { attemptOperationInfinitely, connectDb, formatSeconds, insertEventWithdraw } from './utils';
-import { getContractStandartBridge, selectWorkingProviderL1 } from './utils/chain';
+import {
+  attemptOperationInfinitely,
+  connectDb,
+  formatSeconds,
+  insertEventWithdraw,
+} from './utils';
+import {
+  getContractStandartBridge,
+  selectWorkingProviderL1,
+} from './utils/chain';
 const sleep = require('util').promisify(setTimeout);
 
-const LIMIT_BLOCK = 800;
+const LIMIT_BLOCK = 10000;
 
 let estimateTime = 0;
 
@@ -29,6 +37,7 @@ const fetchPastEvents = async (
     } events. ${i + 1}/${times}`
   );
   for (const log of logs) {
+    console.log({ log });
     const { l1Token, l2Token, from, to, amount, extraData } = log.args;
     const { transactionHash, address, blockNumber } = log;
     const event = {
@@ -39,9 +48,11 @@ const fetchPastEvents = async (
       amount: amount.toString(),
       extraData,
       transactionHash,
-      blockNumber,
+      blockNumber: +blockNumber.toString(),
       address,
     };
+
+    console.log({ event });
 
     try {
       await insertEventWithdraw(db, event);
@@ -58,10 +69,7 @@ const fetchPastEvents = async (
   );
 };
 
-const main = async (
-  db: any,
-  currentBlock: number
-) => {
+const main = async (db: any, currentBlock: number) => {
   console.time('withdrawFetch');
   // Connect to the database and initialize it
   // const db = await connectDb().catch((err) => {

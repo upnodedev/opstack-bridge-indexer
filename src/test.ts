@@ -1,87 +1,47 @@
-import { decodeEventLog, getContract, parseAbiItem } from 'viem';
-import { ENV } from './utils/ENV';
-import { publicClientL1 } from './utils/chain';
-
-// 1. Import modules.
-const getContractInstance = async (client) => {
-  return getContract({
-    address: ENV.L1_PORTAL_ADDRESS,
-    abi: [
-      {
-        anonymous: false,
-        inputs: [
-          { indexed: true, name: 'from', type: 'address' },
-          { indexed: true, name: 'to', type: 'address' },
-          { indexed: true, name: 'version', type: 'uint256' },
-          { name: 'opaqueData', type: 'bytes' },
-        ],
-        name: 'TransactionDeposited',
-        type: 'event',
-      },
-    ],
-    client,
-  });
-};
-
-const fetchPastEvents = async (db, fromBlock, toBlock, i, times) => {
-  const contract = await getContractInstance(publicClientL1);
-  const logs = await publicClientL1.getLogs({
-    address: ENV.L1_PORTAL_ADDRESS,
-    fromBlock,
-    toBlock,
-    event: parseAbiItem(
-      'event TransactionDeposited(address indexed from, address indexed to, uint256 indexed version, bytes opaqueData)'
-    ),
-  });
-
-  console.log(
-    `Fetching events from block ${fromBlock} to ${toBlock} for a total of ${
-      logs.length
-    } events. ${i + 1}/${times}`
-  );
-
-  for (const log of logs) {
-    const event: any = decodeEventLog({
-      abi: contract.abi,
-      ...log,
-    });
-
-    const { from, to, version, opaqueData } = event.args;
-    const { transactionHash, address, blockNumber } = log;
-
-    const eventDetails = {
-      from,
-      to,
-      version: version.toString(),
-      opaqueData,
-      transactionHash,
-      address,
-      blockNumber,
-    };
-
-    console.log(eventDetails);
-  }
-};
+import { depositFetch } from './deposit';
+import { withdrawFetch } from './withdraw';
+import { recieverDeposit } from './recieverDeposit';
+import { recieverWithdrawal } from './recieverWithdrawal';
+import { attemptOperationInfinitely, connectDb } from './utils';
+import { publicClientL1, publicClientL2, selectWorkingProviderL1, selectWorkingProviderL2 } from './utils/chain';
 
 const main = async () => {
-  console.time('fetchPastEvents');
+  console.log("test")
+  const db = await connectDb()
+    .catch((error) => {
+      console.error('Error connecting to database:', error);
+      process.exit(1);
+    })
+    .then((value) => {
+      console.log('Connected to database');
+      return value;
+    });
 
-  const currentBlock = await publicClientL1.getBlockNumber();
+  const currentBlockL1 = await attemptOperationInfinitely(async () => {
+    return selectWorkingProviderL1().then((provider) =>
+      provider.getBlockNumber()
+    );
+  });
 
-  const currentBlockPass = currentBlock - BigInt(1);
-  const diff = currentBlockPass - BigInt(ENV.L1_PORTAL_BLOCK_CREATED);
-  console.log({ currentBlock, currentBlockPass, diff });
+  const currentBlockL2 = await attemptOperationInfinitely(async () => {
+    return selectWorkingProviderL2().then((provider) =>
+      provider.getBlockNumber()
+    );
+  });
 
-  if (diff < BigInt(0)) {
-    console.log('Portal contract has not been deployed yet');
-    return;
-  }
+  const currentBlockL1BigInt = await publicClientL1.getBlockNumber();
+  const currentBlockL2BigInt = await publicClientL2.getBlockNumber();
 
-  // 17365802, 17366601
+  // listen event
+  // recieverDeposit(db, currentBlockL1BigInt - 100n);
+  recieverWithdrawal(db, 4173268n);
 
-  await fetchPastEvents(null, currentBlockPass - BigInt(799), currentBlockPass, 0, 1);
-
-  console.timeEnd('fetchPastEvents');
+  // fetch past events
+  // depositFetch(db, currentBlockL1);
+  // withdrawFetch(db, currentBlockL2);
 };
 
-main();
+main().catch((error) => {
+  console.error('Error in main function:', error);
+  process.exit(1);
+});
