@@ -5,7 +5,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "install": "npm install --ignore-engines",
     "db": "node dist/init.js",
     "build": "rimraf dist && tsc",
     "deposit": "node dist/deposit.js",
