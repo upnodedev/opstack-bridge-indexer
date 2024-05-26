@@ -4,6 +4,7 @@ import express, { Request, Response } from 'express';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import { ENV } from './utils/ENV';
+import cors from 'cors';
 
 // Create express app
 const app = express();
@@ -18,6 +19,13 @@ async function openDb() {
 }
 
 app.use(express.json());
+
+app.use(
+  cors({
+    methods: 'GET,POST,PUT,DELETE', // Allowed methods
+    allowedHeaders: 'Content-Type,Authorization', // Allowed headers
+  })
+);
 
 // Endpoint to fetch data with cursor and optional filter
 // prevent SQL injection
