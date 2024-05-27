@@ -81,7 +81,6 @@ const main = async (db: any, currentBlock: number) => {
 
   const currentBlockPass = currentBlock;
   const diff = currentBlockPass - ENV.L2_STANDARD_BRIDGE_BLOCK_CREATED;
-  // console.log({ currentBlock, currentBlockPass, diff });
 
   if (diff < 0) {
     console.log('l2 standart bridge contract has not been deployed yet');
@@ -93,7 +92,7 @@ const main = async (db: any, currentBlock: number) => {
   console.log({ currentBlockPass, diff, times });
 
   for (let i = 0; i < times; i++) {
-    const fromBlock = ENV.L1_PORTAL_BLOCK_CREATED + i * LIMIT_BLOCK;
+    const fromBlock = ENV.L2_STANDARD_BRIDGE_BLOCK_CREATED + i * LIMIT_BLOCK;
     const toBlock = fromBlock + LIMIT_BLOCK;
     await fetchPastEvents(db, fromBlock, toBlock, i, times);
     await sleep(5);
