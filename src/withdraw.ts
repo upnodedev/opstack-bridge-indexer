@@ -8,7 +8,7 @@ import {
 } from './utils';
 import {
   getContractStandartBridge,
-  selectWorkingProviderL1,
+  selectWorkingProviderL2,
 } from './utils/chain';
 const sleep = require('util').promisify(setTimeout);
 
@@ -25,7 +25,7 @@ const fetchPastEvents = async (
   times: number
 ) => {
   var start = new Date().getTime();
-  const provider = await selectWorkingProviderL1();
+  const provider = await selectWorkingProviderL2();
   const contract = await getContractStandartBridge(provider);
 
   const logs = await attemptOperationInfinitely(() =>
@@ -37,7 +37,6 @@ const fetchPastEvents = async (
     } events. ${i + 1}/${times}`
   );
   for (const log of logs) {
-    console.log({ log });
     const { l1Token, l2Token, from, to, amount, extraData } = log.args;
     const { transactionHash, address, blockNumber } = log;
     const event = {
@@ -51,8 +50,6 @@ const fetchPastEvents = async (
       blockNumber: +blockNumber.toString(),
       address,
     };
-
-    console.log({ event });
 
     try {
       await insertEventWithdraw(db, event);
