@@ -12,7 +12,7 @@ import {
 } from './utils/chain';
 const sleep = require('util').promisify(setTimeout);
 
-const LIMIT_BLOCK = 5000;
+const LIMIT_BLOCK = 10000;
 
 let estimateTime = 0;
 
