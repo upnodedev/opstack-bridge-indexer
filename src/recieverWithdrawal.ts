@@ -54,7 +54,7 @@ const main = async (db: any, currentBlock: any) => {
       },
       // Uncomment the following lines if polling is necessary
       // pollingInterval: 1000,
-      // poll: true,
+      poll: true,
     });
   } catch (error) {
     console.error('Error in main function:', error);
