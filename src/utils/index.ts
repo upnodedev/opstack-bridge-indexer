@@ -110,8 +110,8 @@ export const insertEventDeposit = async (db, event) => {
   const addressContract = event.address;
 
   let amount = decodeOpaque._value;
-  let from = decodeOpaque._from;
-  let to = decodeOpaque._to;
+  let from = decodeOpaque._from ?? event.from;
+  let to = decodeOpaque._to ?? event.to;
   let isEth = true;
   let extraData = decodeOpaque._extraData;
 
