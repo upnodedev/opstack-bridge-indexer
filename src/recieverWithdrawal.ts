@@ -5,19 +5,13 @@ import { publicClientL2 } from './utils/chain';
 
 console.log('Listening for withdrawal events...');
 
-const main = async (db: any, currentBlock: any) => {
-  // const db = await connectDb()
-  //   .catch((error) => {
-  //     console.error('Error connecting to database:', error);
-  //     process.exit(1);
-  //   })
-  //   .then((value) => {
-  //     console.log('Connected to database');
-  //     return value;
-  //   });
+const MAX_RETRIES = 5;
+
+const watchWithdrawEvents = async (db, currentBlock, retryCount = 0) => {
   try {
-    // const currentBlock = (await publicClientL2.getBlockNumber());
-    console.log(`Reciever withdrawal from block : ${currentBlock}`);
+    console.log(
+      `Starting to watch withdrawal events from block: ${currentBlock}`
+    );
 
     publicClientL2.watchContractEvent({
       address: ENV.L2_STANDARD_BRIDGE_ADDRESS,
@@ -45,24 +39,45 @@ const main = async (db: any, currentBlock: any) => {
             await insertEventWithdraw(db, event);
             console.log('Event inserted successfully:', event.transactionHash);
           } catch (err) {
-            console.error('Error inserting event deposit:', err);
+            console.error('Error inserting event withdraw:', err);
           }
         }
       },
-      onError: (error) => {
-        console.error('Error watching contract event:', error);
+      onError: async (error) => {
+        console.error('Error watching contract event withdraw:', error);
+        if (retryCount < MAX_RETRIES) {
+          const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+          console.log(`Retrying in ${delay / 1000} seconds...`);
+          setTimeout(() => {
+            watchWithdrawEvents(db, currentBlock, retryCount + 1);
+          }, delay);
+        } else {
+          console.error('Max retries reached. Stopping watch.');
+        }
       },
-      // Uncomment the following lines if polling is necessary
-      // pollingInterval: 1000,
       poll: true,
     });
+  } catch (error) {
+    console.error('Error in watchWithdrawEvents function:', error);
+    if (retryCount < MAX_RETRIES) {
+      const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+      console.log(`Retrying in ${delay / 1000} seconds...`);
+      setTimeout(() => {
+        watchWithdrawEvents(db, currentBlock, retryCount + 1);
+      }, delay);
+    } else {
+      console.error('Max retries reached. Stopping watch.');
+    }
+  }
+};
+
+const main = async (db, currentBlock) => {
+  try {
+    console.log(`Receiver withdrawal from block: ${currentBlock}`);
+    await watchWithdrawEvents(db, currentBlock);
   } catch (error) {
     console.error('Error in main function:', error);
   }
 };
-
-// main().catch((error) => {
-//   console.error('Unhandled error:', error);
-// });
 
 export { main as recieverWithdrawal };

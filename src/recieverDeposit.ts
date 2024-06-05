@@ -6,19 +6,11 @@ import { decodeOpqdata } from './utils/decodeOpaquedata';
 
 console.log('Listening for deposit events...');
 
-const main = async (db: any, currentBlock: any) => {
-  // const db = await connectDb()
-  //   .catch((error) => {
-  //     console.error('Error connecting to database:', error);
-  //     process.exit(1);
-  //   })
-  //   .then((value) => {
-  //     console.log('Connected to database');
-  //     return value;
-  //   });
+const MAX_RETRIES = 5;
+
+const watchDepositEvents = async (db, currentBlock, retryCount = 0) => {
   try {
-    // const currentBlock = await publicClientL1.getBlockNumber();
-    console.log(`Reciever deposit from block : ${currentBlock}`);
+    console.log(`Starting to watch deposit events from block: ${currentBlock}`);
 
     publicClientL1.watchContractEvent({
       address: ENV.L1_PORTAL_ADDRESS,
@@ -50,20 +42,41 @@ const main = async (db: any, currentBlock: any) => {
           }
         }
       },
-      onError: (error) => {
-        console.error('Error watching contract event:', error);
+      onError: async (error) => {
+        console.error('Error watching contract event deposit:', error);
+        if (retryCount < MAX_RETRIES) {
+          const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+          console.log(`Retrying in ${delay / 1000} seconds...`);
+          setTimeout(() => {
+            watchDepositEvents(db, currentBlock, retryCount + 1);
+          }, delay);
+        } else {
+          console.error('Max retries reached. Stopping watch.');
+        }
       },
-      // Uncomment the following lines if polling is necessary
-      // pollingInterval: 1000,
       poll: true,
     });
+  } catch (error) {
+    console.error('Error in watchDepositEvents function:', error);
+    if (retryCount < MAX_RETRIES) {
+      const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+      console.log(`Retrying in ${delay / 1000} seconds...`);
+      setTimeout(() => {
+        watchDepositEvents(db, currentBlock, retryCount + 1);
+      }, delay);
+    } else {
+      console.error('Max retries reached. Stopping watch.');
+    }
+  }
+};
+
+const main = async (db, currentBlock) => {
+  try {
+    console.log(`Receiver deposit from block: ${currentBlock}`);
+    await watchDepositEvents(db, currentBlock);
   } catch (error) {
     console.error('Error in main function:', error);
   }
 };
-
-// main().catch((error) => {
-//   console.error('Unhandled error:', error);
-// });
 
 export { main as recieverDeposit };
