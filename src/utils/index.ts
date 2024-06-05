@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import { decodeOpqdata } from './decodeOpaquedata';
 
 const sleep = require('util').promisify(setTimeout);
 
@@ -92,27 +93,71 @@ export const insertEventWithdraw = async (db, event) => {
 };
 
 export const insertEventDeposit = async (db, event) => {
-  const {
-    from,
-    to,
-    version,
-    opaqueData,
-    transactionHash,
-    address,
-    blockNumber,
-  } = event;
+  // const {
+  //   from,
+  //   to,
+  //   version,
+  //   opaqueData,
+  //   transactionHash,
+  //   address,
+  //   blockNumber,
+  // } = event;
+  const decodeOpaque = decodeOpqdata(event.opaqueData);
+
+  const transactionHash = event.transactionHash;
+  const version = event.version;
+  const blockNumber = event.blockNumber;
+  const addressContract = event.address;
+
+  let amount = decodeOpaque._value;
+  let from = decodeOpaque._from;
+  let to = decodeOpaque._to;
+  let isEth = true;
+  let extraData = decodeOpaque._extraData;
+
+  let remoteToken = null;
+  let localToken = null;
+
+  // finalBridgeEth
+  if (decodeOpaque.isFinalizeBridgeETH) {
+    amount = decodeOpaque._amount;
+  }
+
+  if (decodeOpaque.isFinalizeBridgeERC20) {
+    remoteToken = decodeOpaque._remoteToken;
+    localToken = decodeOpaque._localToken;
+    amount = decodeOpaque._amount;
+    isEth = false;
+  }
+
   try {
     const stmt = await db.prepare(
-      'INSERT INTO deposit (transactionHash, "from", "to", blockNumber, addressContract, version, opaqueData) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      `INSERT INTO deposit (
+        transactionHash, 
+        "from", 
+        "to", 
+        amount,
+        isEth,
+        extraData,
+        remoteToken,
+        localToken,
+        blockNumber, 
+        addressContract, 
+        version
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     );
     await stmt.run(
       transactionHash,
       from,
       to,
+      amount,
+      isEth,
+      extraData,
+      remoteToken,
+      localToken,
       blockNumber,
-      address,
-      version,
-      opaqueData
+      addressContract,
+      version
     );
   } catch (err) {
     console.error('Failed to insert event:', err);

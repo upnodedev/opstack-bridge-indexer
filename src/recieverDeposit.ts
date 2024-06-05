@@ -2,6 +2,7 @@ import { portalABI } from './abi/portalABI';
 import { connectDb, insertEventDeposit } from './utils';
 import { ENV } from './utils/ENV';
 import { publicClientL1 } from './utils/chain';
+import { decodeOpqdata } from './utils/decodeOpaquedata';
 
 console.log('Listening for deposit events...');
 

@@ -33,11 +33,11 @@ const main = async () => {
 
   // listen event
   recieverDeposit(db, currentBlockL1BigInt - 100n);
-  recieverWithdrawal(db, currentBlockL2BigInt - 100n);
+  // recieverWithdrawal(db, currentBlockL2BigInt - 100n);
 
   // fetch past events
   depositFetch(db, currentBlockL1);
-  withdrawFetch(db, currentBlockL2);
+  // withdrawFetch(db, currentBlockL2);
 };
 
 main().catch((error) => {

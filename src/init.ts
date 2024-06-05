@@ -40,10 +40,14 @@ function createTables(newdb) {
         transactionHash TEXT PRIMARY KEY,
         "from" TEXT,
         "to" TEXT,
+        "amount" TEXT,
+        "isEth" BOOLEAN,
+        "extraData" TEXT,
+        "remoteToken" TEXT,
+        "localToken" TEXT,
         blockNumber INTEGER,
         addressContract TEXT,
-        version TEXT,
-        opaqueData TEXT
+        version TEXT
       );
 
       CREATE TABLE IF NOT EXISTS withdrawal (
