@@ -20,14 +20,15 @@ async function openDb() {
 
 app.use(express.json());
 
-// allow *
-app.use(
-  cors({
-    origin: '*',
-    methods: 'GET,POST,PUT,DELETE', // Allowed methods
-    allowedHeaders: 'Content-Type,Authorization', // Allowed headers
-  })
-);
+// Define your CORS options
+const corsOptions = {
+  origin: '*', // Allow all origins
+  methods: 'GET', // Allow only GET requests
+  allowedHeaders: ['Content-Type', 'Authorization'], // Specify the allowed headers
+};
+
+// Use the CORS middleware with the options
+app.use(cors(corsOptions));
 
 // Endpoint to fetch data with cursor and optional filter
 // prevent SQL injection
