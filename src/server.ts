@@ -20,8 +20,10 @@ async function openDb() {
 
 app.use(express.json());
 
+// allow *
 app.use(
   cors({
+    origin: '*',
     methods: 'GET,POST,PUT,DELETE', // Allowed methods
     allowedHeaders: 'Content-Type,Authorization', // Allowed headers
   })
