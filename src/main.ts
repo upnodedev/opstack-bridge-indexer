@@ -4,6 +4,7 @@ import { recieverDeposit } from './recieverDeposit';
 import { recieverWithdrawal } from './recieverWithdrawal';
 import { attemptOperationInfinitely, connectDb } from './utils';
 import { publicClientL1, publicClientL2, selectWorkingProviderL1, selectWorkingProviderL2 } from './utils/chain';
+import './server'
 
 const main = async () => {
   const db = await connectDb()
