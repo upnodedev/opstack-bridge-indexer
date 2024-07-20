@@ -5,19 +5,19 @@ FROM node:20-alpine
 WORKDIR /usr/src/app
 
 # Copy package.json and yarn.lock to the working directory
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN yarn install
+RUN npm install --ignore-engines
 
 # Copy the rest of the application code to the working directory
 COPY . .
 
 # Build the application
-RUN yarn run build
+RUN npm run build
 
 # Expose the port the app runs on (if needed, change the port as per your application)
 EXPOSE 3000
 
 # Run the database setup and then start the application
-CMD ["sh", "-c", "yarn run db && yarn start"]
+CMD ["sh", "-c", "npm run db && npm start"]
