@@ -45,7 +45,6 @@
     "lodash": "^4.17.21",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
-    "trading-view-recommends-parser-nodejs": "^1.0.2",
     "viem": "^2.10.11",
     "web3": "^4.2.2"
   }
